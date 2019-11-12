@@ -35,48 +35,65 @@
 </head>
 
 <body>
-	<div class="container">
-		<br>
-		<h1 style="text-align:center">Weather Forecast</h1>
-		<hr>
+	<div class="container-fluid">
 		<div class="row">
-			<div class="col-4">
-				<div class="card">
-					<div id="thermometer_outer">
-						<div id="thermometer_inner">
-							<p id="temp_today" class="h3"> 0 F</p>
+			<div class="col-2">
+				<br><br><br><br><br>
+				<label for="lat">Latitude</label>
+				<input type="text" id="lat" class="form-control">
+				<br>
+				<label for="long">Longitude</label>
+				<input type="text" id="long" class="form-control">
+				<br>
+				<button class="btn btn-dark btn-block" id='update'>Update</button>
+			</div>
+			<div class="col-10">
+
+				<br>
+				<h1 style="text-align:center" id='header'>Weather Forecast for America/Los_Angeles</h1>
+				<hr>
+				<div class="row">
+					<div class="col-4">
+						<div class="card">
+							<div id="thermometer_outer">
+								<div id="thermometer_inner">
+									<p id="temp_today" class="h3"> 0 F</p>
+								</div>
+							</div>
+							<div class="card-body">
+								<h5 class="text-center">Thermometer</h5>
+							</div>
 						</div>
 					</div>
-					<div class="card-body">
-						<h5 class="text-center">Thermometer</h5>
+					<div class="col-4">
+						<div class="card" style="height:100%;">
+							<div class="my-auto">
+								<!-- source for images: https://www.iconfinder.com/iconsets/weather-line-19 -->
+								<img id="image_today" class="img-fluid" src="img/clear-day.png"
+									alt="Today's Weather Icon">
+								<p id="icon_today" class="h3" style="text-align:center">Icon</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="card " style="height:100%;">
+							<div class="my-auto">
+								<p class="h3" style="padding-left:15px;">Precipitation: <span
+										id="precip_today">10%</span><br>
+									Humidity: <span id="humidity_today">80%</span><br>
+									Wind Speed: <span id="wind_today">5</span> mph<br>
+									Summary: <span id="summary_today">Summary Info</span></p>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="col-4">
-				<div class="card" style="height:100%;">
-					<div class="my-auto">
-						<!-- source for images: https://www.iconfinder.com/iconsets/weather-line-19 -->
-						<img id="image_today" class="img-fluid" src="img/clear-day.png" alt="Today's Weather Icon">
-						<p id="icon_today" class="h3" style="text-align:center">Icon</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-4">
-				<div class="card " style="height:100%;">
-					<div class="my-auto">
-						<p class="h3" style="padding-left:15px;">Precipitation: <span id="precip_today">10%</span><br>
-							Humidity: <span id="humidity_today">80%</span><br>
-							Wind Speed: <span id="wind_today">5</span> mph<br>
-							Summary: <span id="summary_today">Summary Info</span></p>
-					</div>
-				</div>
-			</div>
-		</div>
-		<br>
-		<h2 class="h1" style="text-align:center;">6 Day Forecast</h2>
-		<hr>
-		<div class="row" id="6_day_forecast">
+				<br>
+				<h2 class="h1" style="text-align:center;">6 Day Forecast</h2>
+				<hr>
+				<div class="row" id="6_day_forecast">
 
+				</div>
+			</div>
 		</div>
 		<br>
 	</div>
@@ -90,13 +107,26 @@
 		crossorigin="anonymous"></script>
 	<script>
 		$(document).ready(function () {
-			var url = 'https://api.darksky.net/forecast/6563a042c61651600cad8b591ce2b7fc/37.8267,-122.4233'; //Place your DarkSky API Call Here 
+			var lat = '37.8267';
+			var long = '-122.4233';
+			var url = `https://api.darksky.net/forecast/6563a042c61651600cad8b591ce2b7fc/${lat},${long}`; //Place your DarkSky API Call Here 
 			getWeather(url);
+			$("#update").click(function () {
+				lat = $("#lat").val();
+				long = $("#long").val();
+				if (lat != "" && long != "") {
+					url = `https://api.darksky.net/forecast/6563a042c61651600cad8b591ce2b7fc/${lat},${long}`;
+					getWeather(url);
+					// alert("updated");
+				}
+			});
 		})
 
 		function getWeather(url) {
+			// Boulder: 40.002053, -105.256950
 			$.ajax({ url: url, dataType: "jsonp" }).then(function (data) {
 				console.log(data);
+				$("#header").html("Weather Forecast for " + data.timezone);
 				/* 
 					Read the current weather information from the data point values [https://darksky.net/dev/docs#data-point] to 
 					update the webpage for today's weather:
